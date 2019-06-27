@@ -1,0 +1,19 @@
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# User specific aliases and functions
+
+## peco-history
+peco-select-history() {
+    declare l=$(HISTTIMEFORMAT= history | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$READLINE_LINE")
+    READLINE_LINE="$l"
+    READLINE_POINT=${#l}
+}
+if [ -t 1 ]
+then
+    bind -x '"\C-r": peco-select-history'
+fi

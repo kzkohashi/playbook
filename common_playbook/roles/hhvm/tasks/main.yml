@@ -1,0 +1,32 @@
+---
+- name: Put opsrock-hhvm-depends.repo
+  template: src=opsrock-hhvm-depends.repo.j2 dest=/etc/yum.repos.d/opsrock-hhvm-depends.repo backup=true mode=0644
+
+- name: Put opsrock-hhvm.repo
+  template: src=opsrock-hhvm.repo.j2 dest=/etc/yum.repos.d/opsrock-hhvm.repo backup=true mode=0644
+
+#- name: Put gleez.repo
+#  template: src=gleez.repo.j2 dest=/etc/yum.repos.d/gleez.repo backup=true mode=0644
+
+- name: Install glog tbb
+  yum: name={{ item }} disable_gpg_check=yes enablerepo=opsrock-hhvm-depends
+  with_items:
+    - tbb
+    - glog
+
+- name: Install hhvm
+  yum: name={{ item }} disable_gpg_check=yes enablerepo=opsrock-hhvm
+  with_items:
+    - hhvm
+
+- name: Put hhvm server.ini
+  template: src=server.ini.j2 dest=/etc/hhvm/server.ini backup=true mode=0644
+
+- name: Put hhvm php.ini
+  template: src=php.ini.j2 dest=/etc/hhvm/php.ini backup=true mode=0644
+
+- name: service hhvm restart
+  service: name=hhvm state=restarted
+
+- name: chkconfig hhvm on
+  service: name=hhvm enabled=yes

@@ -1,0 +1,16 @@
+---
+- name: Install php-fpm-70
+  yum: name={{ item }}
+  with_items:
+    - php70-fpm
+
+- name: Set php-fpm-7.0 service to start on boot
+  service: name=php-fpm-7.0 enabled=true
+
+- name: Put php-fpm-70.conf
+  template: src=php-fpm-7.0.conf.j2 dest=/etc/php-fpm-7.0.conf backup=true mode=0644
+  notify: restart php-fpm-7.0
+
+- name: Put www.conf
+  template: src=www.conf.j2 dest=/etc/php-fpm-7.0.d/www.conf backup=true mode=0644
+  notify: restart php-fpm-7.0

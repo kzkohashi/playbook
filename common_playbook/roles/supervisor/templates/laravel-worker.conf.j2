@@ -1,0 +1,13 @@
+[program:laravel-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/app/current/artisan queue:work --sleep=3 --tries=3
+process_name=%(program_name)s_%(process_num)02d
+user=deployer
+autostart=true
+autorestart=true
+stdout_logfile = /var/log/supervisor/%(program_name)s.log
+stdout_logfile_maxbytes = 10MB
+stdout_logfile_backups = 10
+numprocs=1
+stderr_logfile = /var/log/supervisor/%(program_name)s-error.log
+stopsignal=INT

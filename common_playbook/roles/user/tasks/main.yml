@@ -1,0 +1,35 @@
+---
+- name: add user
+  user: name={{item}} state=present home=/home/{{item}}
+  with_items: "{{ users }}"
+
+- name: mkdir .ssh
+  file: dest=/home/{{item}}/.ssh/ state=directory owner={{item}} group={{item}} mode=700
+  with_items: "{{ users }}"
+
+# TODO authorized_keysモジュールつかったほうがいい
+- name: add authorized keys
+  file: dest=/home/{{item}}/.ssh/authorized_keys state=touch owner={{item}} group={{item}} mode=600
+  with_items: "{{ users }}"
+
+# ログインユーザーとして登録する場合は、user/files/にパブリックキーファイルを必ず作成する
+- name: copy publickey for login user
+  copy: src={{item}}_public.j2 dest=/home/{{item}}/.ssh/authorized_keys
+  with_items: "{{ login_users }}"
+
+- name: add sudo
+  lineinfile:
+    dest: /etc/sudoers
+    backup: yes
+    line: "{{ item }} ALL=(ALL) NOPASSWD: ALL"
+  with_items: "{{ users }}"
+
+- name: change /var directry mode
+  file: path="{{ app_dir }}" state=directory owner=root group=deployer mode=0775
+
+- name: remove user
+  when: del_users is defined
+  user: name={{ item }} state=absent remove=yes
+  with_items: "{{ del_users }}"
+
+

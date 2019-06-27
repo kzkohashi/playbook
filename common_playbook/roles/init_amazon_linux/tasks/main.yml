@@ -1,0 +1,38 @@
+---
+- name: Update all packages
+  yum: name=* state=latest
+
+- name: Install awslogs
+  yum: name=awslogs state=latest
+
+- name: Install htop
+  yum: name=htop state=latest
+
+- name: Remove sticky bit setting to /tmp
+  file: path=/tmp mode="o-t"
+
+- name: set locale to /etc/sysconfig/i18n
+  replace: >
+    dest=/etc/sysconfig/i18n
+    regexp='^LANG=en_US\.UTF-8'
+    replace='LANG={{locale}}'
+
+- name: set zone to /etc/sysconfig/clock
+  replace: >
+    dest=/etc/sysconfig/clock
+    regexp='^ZONE=\"UTC\"'
+    replace='ZONE="{{zone}}"'
+    
+- name: set localtime
+  file: >
+    src={{zoneinfo_path}}
+    dest=/etc/localtime
+    state=link
+    force=yes
+
+- pam_limits: domain=* limit_type=soft limit_item=nofile value=65536
+
+- pam_limits: domain=* limit_type=hard limit_item=nofile value=65536
+
+- name: Install git
+  yum: name=git state=latest

@@ -1,0 +1,43 @@
+- name: Install libtool
+  yum: name=libtool
+
+- name: rpm install
+  yum:
+    name: http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.rpm
+    state: present
+
+
+- name: Install tools
+  yum: name={{ item }}
+  with_items:
+    - libtool
+    - mecab
+    - mecab-ipadic
+    - mecab-devel
+
+
+- name: Clean artifact path
+  file:
+    state: absent
+    path: /tmp/php-mecab
+
+- name: Git clone php-meca
+  git: repo=https://github.com/rsky/php-mecab.git
+       dest=/tmp/php-mecab
+       force=yes
+
+- name: phpize php-mecab
+  command: chdir="/tmp/php-mecab/mecab" phpize
+
+- name: comfigure php-mecab
+  command: chdir="/tmp/php-mecab/mecab" ./configure
+
+- name: make all
+  make:
+    chdir: "/tmp/php-mecab/mecab"
+    target: all
+
+- name: make install
+  make:
+    chdir: "/tmp/php-mecab/mecab"
+    target: install

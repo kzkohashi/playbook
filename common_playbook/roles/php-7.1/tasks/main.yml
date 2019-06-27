@@ -1,0 +1,21 @@
+- name: Install php71
+  yum: name={{ item }}
+  with_items:
+    - php71
+    - php71-mbstring
+    - php71-pdo
+    - php71-mcrypt
+    - php71-mysqlnd
+    - php71-xml
+    - php71-pgsql
+    - php71-pecl-memcached
+    - php71-gd
+    - php71-intl
+    - php71-xsl
+    - php71-devel
+
+- name: chmod php-session
+  file: path=/var/lib/php/7.1/session mode=777
+
+- name: Put php.ini
+  template: src=php.ini.j2 dest=/etc/php.ini backup=true mode=0644 follow=yes

@@ -1,0 +1,19 @@
+---
+
+- name: maintenance
+  file: path=/var/www/maintenance state=directory owner=nginx group=nginx mode=0755
+
+- name: Put maintenance.html
+  template: src=maintenance.html.j2 dest=/var/www/maintenance/maintenance.html backup=true mode=0644
+
+- name: confirm mode
+  pause: prompt="メンテナンスモード有効化(on)、無効化(off)、キャンセル(exit) [on/off/EXIT]"
+  register: mode
+
+- name: maintenance on
+  file: path=/var/tmp/do_maintenance state=touch owner=nginx group=nginx mode=0644
+  when: mode.user_input == 'on'
+
+- name: maintenance off
+  file: path=/var/tmp/do_maintenance state=absent
+  when: mode.user_input == 'off'

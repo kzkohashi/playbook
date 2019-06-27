@@ -1,0 +1,12 @@
+- name: Install php70
+  yum: name={{ item }}
+  with_items:
+    - php70
+    - php70-mbstring
+    - php70-pdo
+    - php70-mcrypt
+    - php70-mysqlnd
+    - php70-xml
+
+- name: chmod php-session
+  file: path=/var/lib/php/7.0/session mode=777

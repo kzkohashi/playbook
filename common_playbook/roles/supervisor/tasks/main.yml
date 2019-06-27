@@ -1,0 +1,27 @@
+---
+- easy_install:
+    name: supervisor
+    state: latest
+
+- name: put init script
+  template: src=supervisord.init.j2 dest=/etc/init.d/supervisord mode=0755
+
+- name: put supervisord.conf
+  template: src=supervisord.conf.j2 dest=/etc/supervisord.conf mode=0644
+#  notify: restart supervisord
+
+- name: mkdir supervisor conf.d
+  file: path=/etc/supervisor/conf.d state=directory owner=root group=root mode=0755
+
+- name: mkdir /var/log/supervisor/
+  file: path=/var/log/supervisor state=directory owner=root group=root mode=0755
+
+- name: Put conf
+  template: src={{ program_name }}.conf.j2 dest=/etc/supervisor/conf.d/{{ program_name }}.conf mode=0644
+#  notify: restart supervisord
+
+#- name: supervisord restarted
+#  service:
+#    name: supervisord
+#    state: restarted
+#    enabled: yes

@@ -1,0 +1,4 @@
+---
+- name: user join to other group
+  user: name={{ item }} append=yes groups=deployer
+  with_items: "{{ user_group }}"
