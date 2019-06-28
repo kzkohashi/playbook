@@ -1,0 +1,12 @@
+---
+nginx_server_name: .net
+
+locale: ja_JP.UTF-8
+zone: Asia/Tokyo
+zoneinfo_path: /usr/share/zoneinfo/Asia/Tokyo
+
+base_auth: false
+
+php_memory_limit: 2048M
+php_save_handler: memcached
+

@@ -1,0 +1,39 @@
+- hosts: all
+  remote_user: ec2-user
+  become: yes
+  roles:
+    - ../../common_playbook/roles/init_amazon_linux
+    - ../../common_playbook/roles/user
+  vars:
+    repo_upgrade: none
+    env: production
+    login_users:
+      - ec2-user
+      - root
+    app_name: app
+    deploy_user: deployer
+    users:
+      - "{{deploy_user}}"
+    login_users:
+      - "{{deploy_user}}"
+    app_dir: '/var/www'
+
+- hosts: backend
+  remote_user: ec2-user
+  become: yes
+  roles:
+    - ../../common_playbook/roles/php-7.1
+    - ../../common_playbook/roles/php-fpm-7.1
+    - ../../common_playbook/roles/php-mecab
+    - ../../common_playbook/roles/composer
+    - ../../common_playbook/roles/nginx
+  vars:
+    env: production
+    app_name: app
+    deploy_user: deployer
+    users:
+      - "{{deploy_user}}"
+    login_users:
+      - "{{deploy_user}}"
+    app_dir: '/var/www'
+
