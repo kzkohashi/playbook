@@ -1,0 +1,29 @@
+- name: unzip go 1.12.6
+  unarchive:
+    src: https://dl.google.com/go/go1.12.6.linux-amd64.tar.gz
+    dest: /usr/local
+    remote_src: yes
+  ignore_errors: yes
+
+- name: copy goenv.sh
+  copy:
+    src: goenv.sh
+    dest: /etc/profile.d/.
+    mode: 0755
+    backup: no
+    owner: root
+    group: root
+
+- name: source /etc/profile.d/goenv.sh
+  shell: bash -lc "source /etc/profile.d/goenv.sh"
+  ignore_errors: yes
+
+- name: go get
+  shell: >
+    bash -lc "go get -u github.com/pressly/goose/cmd/goose";
+    bash -lc "go get -u github.com/lestrrat-go/test-mysqld";
+    bash -lc "go get -u github.com/volatiletech/sqlboiler";
+    bash -lc "go get -u github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql";
+    bash -lc "go get -u github.com/golang/dep/cmd/dep";
+    bash -lc "go get -u github.com/tockins/realize";
+  ignore_errors: yes
